@@ -16,8 +16,8 @@ class SwipeDirection(val multiplier: Int) {
     var friction = 1f
 
     /**Add a step within the swipe, going from whatever the next lowest step position is until the position (in dp) of this**/
-    fun step(pos: Int, block: SwipeStep.() -> Unit) {
-        val step = SwipeStep(dpToPx(pos))
+    fun step(dp: Int, block: SwipeStep.() -> Unit) {
+        val step = SwipeStep(dpToPx(dp))
         step.apply(block)
         list.add(step)
     }
