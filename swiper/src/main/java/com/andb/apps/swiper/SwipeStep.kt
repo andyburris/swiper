@@ -14,31 +14,74 @@ class SwipeStep(val endX: Int) {
         const val SIDE_VIEW = 8283
     }
 
+    /**
+     * Function to determine background color of swipe based on viewHolder and x position of swipe.
+     * @see SwipeStep.color to set constant value
+     */
     var colorFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Int = { _, _ -> Color.BLACK }
 
+    /**
+     * Set a constant background color for the swipe.
+     * @see SwipeStep.colorFun to set a dynamic value
+     */
     fun color(color: Int) {
         colorFun = { _, _ -> color }
     }
 
+    /**
+     * Function to determine icon of swipe based on viewHolder and x position of swipe.
+     * @see SwipeStep.icon to set constant value
+     */
     var iconFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Drawable? = { _, _ -> null }
+
+    /**
+     * Set a constant icon for the swipe.
+     * @see SwipeStep.iconFun to set a dynamic value
+     */
     fun icon(drawable: Drawable) {
         iconFun = { _, _ -> drawable }
     }
 
-    var iconColorFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Int = { _, _ -> Color.WHITE }
-    fun iconColor(color: Int){
+    /**
+     * Function to determine color for icon of swipe based on viewHolder and x position of swipe.
+     * @see SwipeStep.iconColor to set constant value
+     */
+    var iconColorFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Int =
+        { _, _ -> Color.WHITE }
+
+    /**
+     * Set a constant color for icon of swipe.
+     * @see SwipeStep.iconColorFun to set a dynamic value
+     */
+    fun iconColor(color: Int) {
         iconColorFun = { _, _ -> color }
     }
 
+    /**
+     * Action when swipe is completed at this step
+     */
     var action: ((RecyclerView.ViewHolder) -> Unit)? = null
-    fun action(block: (viewHolder: RecyclerView.ViewHolder) -> Unit){
+
+    /**
+     * Set action for when swipe is completed at this step
+     */
+    fun action(block: (viewHolder: RecyclerView.ViewHolder) -> Unit) {
         action = block
     }
 
+    /**
+     * Set padding from whichever side is chosen in px. Defaults to 16dp (converted to px)
+     */
     var marginSide = dpToPx(16)
+
+    /**
+     * Set side that icon is aligned to. SIDE_EDGE is the edge of the screen (static positioning) and SIDE_VIEW is the edge of the view that is being swiped (moves along with view).
+     * @see SIDE_EDGE
+     * @see SIDE_VIEW
+     */
     var side = SIDE_EDGE
 
-    var iconPositioning: (RecyclerView.ViewHolder, Float, Int) -> Drawable? = { vh, dX, direction ->
+    private val iconPositioning: (RecyclerView.ViewHolder, Float, Int) -> Drawable? = { vh, dX, direction ->
         val itemView = vh.itemView
         iconFun.invoke(vh, dX)?.mutate()?.also { icon ->
             icon.setColorFilter(iconColorFun.invoke(vh, dX), PorterDuff.Mode.SRC_ATOP)
