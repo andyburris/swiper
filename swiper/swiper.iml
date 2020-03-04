@@ -26,7 +26,7 @@
       </configuration>
     </facet>
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false" pureKotlinSourceFolders="C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\debug\kotlin;C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\debug\java;C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\release\kotlin;C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\release\java;C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\debugAndroidTest\kotlin;C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\debugUnitTest\kotlin;C:\Users\andb3003\AndroidStudioProjects\libraries\Swiper\swiper\src\releaseUnitTest\kotlin">
+      <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false">
         <compilerSettings>
           <option name="additionalArguments" value="-Xallow-no-source-files" />
         </compilerSettings>

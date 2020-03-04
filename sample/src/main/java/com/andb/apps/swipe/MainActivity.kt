@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    val itemsList = listOf("Apple", "Banana", "Cranberry", "Fig", "Grape", "Honeydew", "Kiwi", "Lemon", "Mango", "Nectarine", "Orange", "Peach", "Raspberry", "Strawberry", "Tangerine", "Watermelon")
+    private val itemsList = listOf("Apple", "Banana", "Cranberry", "Fig", "Grape", "Honeydew", "Kiwi", "Lemon", "Mango", "Nectarine", "Orange", "Peach", "Raspberry", "Strawberry", "Tangerine", "Watermelon")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,22 +24,33 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = Adapter(itemsList)
         recyclerView.swipeWith {
-            left {
+            rightToLeft {
                 threshold = 36
                 step(124){
-                    color = Color.BLUE
-                    icon = resources.getDrawable(R.drawable.ic_edit)
+                    colorFun = { vh, dX ->
+                        Color.BLUE.withAlpha(dX/endX)
+                    }
+                    icon(resources.getDrawable(R.drawable.ic_edit))
                     side = SwipeStep.SIDE_EDGE
-                    action = { pos->
-                        Snackbar.make(recyclerView, "Step 1 of left swipe at position $pos", Snackbar.LENGTH_SHORT).show()
+                    action { vh->
+                        Snackbar.make(recyclerView, "Step 1 of left swipe at position ${vh.adapterPosition}", Snackbar.LENGTH_SHORT).show()
                     }
                 }
                 endStep {
-                    color = Color.RED
-                    icon = resources.getDrawable(R.drawable.ic_delete)
+                    color(Color.RED)
+                    icon(resources.getDrawable(R.drawable.ic_delete))
                     side = SwipeStep.SIDE_VIEW
-                    action = { pos->
-                        Snackbar.make(recyclerView, "Last step of left swipe at position $pos", Snackbar.LENGTH_SHORT).show()
+                    action { vh->
+                        Snackbar.make(recyclerView, "Last step of left swipe at position ${vh.adapterPosition}", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            leftToRight {
+                threshold = 36
+                endStep {
+                    colorFun = {viewHolder, dX ->
+                        val saturation: Float = (viewHolder.adapterPosition * .1f) % 1
+                        Color.BLUE.withSaturation(saturation)
                     }
                 }
             }

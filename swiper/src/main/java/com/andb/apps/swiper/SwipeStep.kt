@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 
 class SwipeStep(val endX: Int) {
 
@@ -13,25 +14,34 @@ class SwipeStep(val endX: Int) {
         const val SIDE_VIEW = 8283
     }
 
-    var colorFun: (dX: Float) -> Int = { Color.TRANSPARENT }
-    var color: Int = Color.TRANSPARENT
-        set(value) {
-            field = value
-            colorFun = { value }
-        }
+    var colorFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Int = { _, _ -> Color.BLACK }
 
-    fun color(value: (Float) -> Int) {
-        colorFun = value
+    fun color(color: Int) {
+        colorFun = { _, _ -> color }
     }
 
-    var icon: Drawable? = null
-    var iconColor = Color.WHITE
-    var action: ((Int) -> Unit)? = null
+    var iconFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Drawable? = { _, _ -> null }
+    fun icon(drawable: Drawable) {
+        iconFun = { _, _ -> drawable }
+    }
+
+    var iconColorFun: (viewHolder: RecyclerView.ViewHolder, dX: Float) -> Int = { _, _ -> Color.WHITE }
+    fun iconColor(color: Int){
+        iconColorFun = { _, _ -> color }
+    }
+
+    var action: ((RecyclerView.ViewHolder) -> Unit)? = null
+    fun action(block: (viewHolder: RecyclerView.ViewHolder) -> Unit){
+        action = block
+    }
+
     var marginSide = dpToPx(16)
     var side = SIDE_EDGE
-    var iconPositioning: (View, Float, Int) -> Drawable? = { itemView, dX, direction ->
-        icon?.mutate()?.also { icon ->
-            icon.setColorFilter(iconColor, PorterDuff.Mode.SRC_ATOP)
+
+    var iconPositioning: (RecyclerView.ViewHolder, Float, Int) -> Drawable? = { vh, dX, direction ->
+        val itemView = vh.itemView
+        iconFun.invoke(vh, dX)?.mutate()?.also { icon ->
+            icon.setColorFilter(iconColorFun.invoke(vh, dX), PorterDuff.Mode.SRC_ATOP)
             val top = itemView.top + (itemView.height - icon.intrinsicHeight) / 2
             val bottom = top + icon.intrinsicHeight
             when (direction) {
@@ -64,7 +74,8 @@ class SwipeStep(val endX: Int) {
     }
 
 
-    fun getBoundedIcon(itemView: View, dX: Float, direction: Int): Drawable? {
-        return iconPositioning.invoke(itemView, dX, direction)
+    fun getBoundedIcon(viewHolder: RecyclerView.ViewHolder, dX: Float, direction: Int): Drawable? {
+        return iconPositioning.invoke(viewHolder, dX, direction)
     }
+
 }

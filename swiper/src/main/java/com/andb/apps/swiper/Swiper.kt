@@ -13,19 +13,19 @@ class Swiper : ItemTouchHelper.Callback() {
     var swipeX = 0f
     var swipeThreshold: (RecyclerView.ViewHolder) -> Float = { vh -> vh.itemView.width.toFloat() + 1f }
 
-    private val left = SwipeDirection(SwipeDirection.MULTIPLIER_LEFT)
-    private val right = SwipeDirection(SwipeDirection.MULTIPLIER_RIGHT)
+    private val rightToLeft = SwipeDirection(SwipeDirection.MULTIPLIER_RIGHT_TO_LEFT)
+    private val leftToRight = SwipeDirection(SwipeDirection.MULTIPLIER_LEFT_TO_RIGHT)
 
     /** Create steps for right to left swipes **/
-    fun left(block: SwipeDirection.() -> Unit) {
-        left.apply(block)
-        left.list.sortBy { it.endX }
+    fun rightToLeft(block: SwipeDirection.() -> Unit) {
+        rightToLeft.apply(block)
+        rightToLeft.list.sortBy { it.endX }
     }
 
     /** Create steps for left to right swipes **/
-    fun right(block: SwipeDirection.() -> Unit) {
-        right.apply(block)
-        right.list.sortBy { it.endX }
+    fun leftToRight(block: SwipeDirection.() -> Unit) {
+        leftToRight.apply(block)
+        leftToRight.list.sortBy { it.endX }
     }
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) =
@@ -40,18 +40,18 @@ class Swiper : ItemTouchHelper.Callback() {
         val direction = if (swipeX > 0) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT
         when (direction) {
             ItemTouchHelper.LEFT -> {
-                Log.d("ith", "clearView direction: left, swipeX: $swipeX > threshold: ${left.threshold}?")
-                if (abs(swipeX) >= left.threshold) {
-                    Log.d("ith", "swipe triggered left, swipeX: $swipeX, options: ${left.list.map { it.endX }} ")
-                    val currentStep = left.list.filter { abs(swipeX) <= it.endX }.minBy { it.endX }
-                    currentStep?.action?.invoke(viewHolder.adapterPosition)
+                Log.d("ith", "clearView direction: left, swipeX: $swipeX > threshold: ${rightToLeft.threshold}?")
+                if (abs(swipeX) >= rightToLeft.threshold) {
+                    Log.d("ith", "swipe triggered left, swipeX: $swipeX, options: ${rightToLeft.list.map { it.endX }} ")
+                    val currentStep = rightToLeft.list.filter { abs(swipeX) <= it.endX }.minBy { it.endX }
+                    currentStep?.action?.invoke(viewHolder)
                 }
             }
             ItemTouchHelper.RIGHT -> {
                 Log.d("ith", "clearView direction: right")
-                if (swipeX >= right.threshold) {
-                    val currentStep = right.list.filter { swipeX <= it.endX }.minBy { it.endX }
-                    currentStep?.action?.invoke(viewHolder.adapterPosition)
+                if (swipeX >= leftToRight.threshold) {
+                    val currentStep = leftToRight.list.filter { swipeX <= it.endX }.minBy { it.endX }
+                    currentStep?.action?.invoke(viewHolder)
                 }
             }
         }
@@ -71,7 +71,7 @@ class Swiper : ItemTouchHelper.Callback() {
 
         if (dXIn == 0f) return
 
-        val direction = if (dXIn > 0) right else left
+        val direction = if (dXIn > 0) leftToRight else rightToLeft
 
         //get friction-adjusted x-value if not bigger than max for this direction
         val dXNew = min(
@@ -82,9 +82,9 @@ class Swiper : ItemTouchHelper.Callback() {
         val step = direction.list.filter { dXNew <= it.endX }.minBy { it.endX }
             ?: throw Exception("If this line is called, dXNew should be below or equal for minBy (dXNew = $dXNew, steps are ${direction.list.map { it.endX }})")
 
-        createBackgroundDrawable(step.colorFun(dXNew), viewHolder.itemView).draw(c)
+        createBackgroundDrawable(step.colorFun(viewHolder, dXNew), viewHolder.itemView).draw(c)
 
-        step.getBoundedIcon(viewHolder.itemView, dXNew, if(dXIn > 0) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT)?.draw(c)
+        step.getBoundedIcon(viewHolder, dXNew, if(dXIn > 0) ItemTouchHelper.RIGHT else ItemTouchHelper.LEFT)?.draw(c)
 
         if (isCurrentlyActive) {
             swipeX = dXNew * direction.multiplier
@@ -116,8 +116,8 @@ class Swiper : ItemTouchHelper.Callback() {
     }
 
     private fun getDirectionFlags(): Int {
-        val left = left.list.isNotEmpty()
-        val right = right.list.isNotEmpty()
+        val left = rightToLeft.list.isNotEmpty()
+        val right = leftToRight.list.isNotEmpty()
         return when {
             left && right -> ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             left -> ItemTouchHelper.LEFT
