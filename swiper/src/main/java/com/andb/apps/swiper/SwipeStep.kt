@@ -3,11 +3,10 @@ package com.andb.apps.swiper
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
-import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class SwipeStep(val endX: Int) {
+class SwipeStep(val endX: Int, val viewTypes: List<Int>) {
 
     companion object {
         const val SIDE_EDGE = 7834
@@ -117,7 +116,7 @@ class SwipeStep(val endX: Int) {
     }
 
 
-    fun getBoundedIcon(viewHolder: RecyclerView.ViewHolder, dX: Float, direction: Int): Drawable? {
+    internal fun getBoundedIcon(viewHolder: RecyclerView.ViewHolder, dX: Float, direction: Int): Drawable? {
         return iconPositioning.invoke(viewHolder, dX, direction)
     }
 

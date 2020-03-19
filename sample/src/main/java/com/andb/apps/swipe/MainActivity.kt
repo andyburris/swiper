@@ -36,12 +36,20 @@ class MainActivity : AppCompatActivity() {
                         Snackbar.make(recyclerView, "Step 1 of left swipe at position ${vh.adapterPosition}", Snackbar.LENGTH_SHORT).show()
                     }
                 }
-                endStep {
+                endStep(VIEW_TYPE_1) {
                     color(Color.RED)
                     icon(resources.getDrawable(R.drawable.ic_delete))
                     side = SwipeStep.SIDE_VIEW
                     action { vh->
-                        Snackbar.make(recyclerView, "Last step of left swipe at position ${vh.adapterPosition}", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(recyclerView, "Last step of left swipe for type 1 at position ${vh.adapterPosition}", Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+                endStep(VIEW_TYPE_2){
+                    color(Color.GREEN)
+                    icon(resources.getDrawable(R.drawable.ic_more_horiz))
+                    side = SwipeStep.SIDE_VIEW
+                    action { vh->
+                        Snackbar.make(recyclerView, "Last step of left swipe for type 2 at position ${vh.adapterPosition}", Snackbar.LENGTH_SHORT).show()
                     }
                 }
             }
