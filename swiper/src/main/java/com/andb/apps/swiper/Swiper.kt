@@ -63,8 +63,7 @@ class Swiper : ItemTouchHelper.Callback() {
         //get friction-adjusted x-value if not bigger than max for this direction
         val dXNew = min(abs(dXIn * direction.friction), direction.endX(viewHolder))
 
-        val step = direction.getStepBy(dXNew, viewHolder)
-            ?: throw Exception("If this line is called, dXNew should be below or equal for minBy (dXNew = $dXNew, steps are ${direction.steps.map { it.endX }})")
+        val step = direction.getStepBy(dXNew, viewHolder) ?: return
 
         createBackgroundDrawable(step.colorFun(viewHolder, dXNew), viewHolder.itemView).draw(c)
 
